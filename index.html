@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>EXIT117</title>
+  <meta charset="UTF-8">
+  <title>Time Is Running Out</title>
   <style>
     body {
-      background-color: black;
-      color: white;
+      background: #000;
+      color: #fff;
       font-family: monospace;
       display: flex;
       flex-direction: column;
@@ -16,119 +15,42 @@
       height: 100vh;
       margin: 0;
     }
-
     h1 {
-      font-size: 4rem;
-      margin-bottom: 1rem;
+      font-size: 2em;
+      margin-bottom: 20px;
     }
-
     #countdown {
-      font-size: 3rem;
-      transition: transform 0.1s;
-    }
-
-    @keyframes glitch {
-      0% { transform: translate(0); }
-      20% { transform: translate(-2px, 2px); }
-      40% { transform: translate(-2px, -2px); }
-      60% { transform: translate(2px, 2px); }
-      80% { transform: translate(2px, -2px); }
-      100% { transform: translate(0); }
-    }
-
-    .glitch {
-      animation: glitch 0.3s linear;
-    }
-
-    #breadImage {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      max-width: 80vw;
-      max-height: 80vh;
-      pointer-events: none;
-      z-index: 9999;
+      font-size: 3em;
+      letter-spacing: 2px;
     }
   </style>
 </head>
 <body>
-  <h1 id="title">EXIT117</h1>
+  <h1>Time is running out.</h1>
   <div id="countdown">Loading...</div>
-  <img id="breadImage" src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Bread.jpg" alt="Bread" />
-  <audio id="beep" src="https://yourdomain.com/smoke-detector-alarm.mp3"></audio>
-  <audio id="breadAudio" loop>
-    <source src="https://yourdomain.com/bread-loop.mp3" type="audio/mpeg" />
-  </audio>
 
   <script>
-    const countdownEl = document.getElementById("countdown");
-    const breadEl = document.getElementById("breadImage");
-    const titleEl = document.getElementById("title");
-    const beep = document.getElementById("beep");
-    const breadAudio = document.getElementById("breadAudio");
-
-    let targetDate = new Date("2025-07-21T00:00:00Z");
-    let breadMode = false;
-
-    function getRandomFutureDate() {
-      const now = new Date();
-      const weeks = Math.floor(Math.random() * 4) + 1; // 1 to 4 weeks
-      return new Date(now.getTime() + weeks * 7 * 24 * 60 * 60 * 1000);
-    }
-
     function updateCountdown() {
+      const targetDate = new Date("2025-07-21T00:00:00Z");
       const now = new Date();
-      const distance = targetDate - now;
+      let diff = targetDate - now;
 
-      if (breadMode) return;
-
-      if (distance <= 0) {
-        enterBreadMode();
-        return;
+      if (diff <= 0) {
+        // Reset: set new target date again
+        diff = targetDate - now;
       }
 
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
 
-      countdownEl.innerText =
-        `${String(days).padStart(2, "0")}:${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-    }
-
-    function enterBreadMode() {
-      breadMode = true;
-      countdownEl.style.display = "none";
-      titleEl.style.display = "none";
-      breadEl.style.display = "block";
-      breadAudio.play().catch(() => {});
-
-      setTimeout(() => {
-        breadEl.style.display = "none";
-        countdownEl.style.display = "block";
-        titleEl.style.display = "block";
-        breadAudio.pause();
-        breadAudio.currentTime = 0;
-        targetDate = getRandomFutureDate();
-        breadMode = false;
-        updateCountdown();
-      }, 3600000); // Show bread for 1 hour
+      document.getElementById("countdown").textContent =
+        `${days}d ${hours}h ${minutes}m ${seconds}s`;
     }
 
     setInterval(updateCountdown, 1000);
     updateCountdown();
-
-    // Smoke alarm beep randomly every 10–20 mins
-    function scheduleBeep() {
-      const interval = Math.random() * (1200000 - 600000) + 600000;
-      setTimeout(() => {
-        if (!breadMode) beep.play().catch(() => {});
-        scheduleBeep();
-      }, interval);
-    }
-    scheduleBeep();
   </script>
 </body>
 </html>
