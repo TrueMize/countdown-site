@@ -40,18 +40,12 @@
       animation: glitch 0.3s linear;
     }
 
-    #randomImage, #breadImage {
+    #breadImage {
       display: none;
       position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      max-width: 400px;
-      z-index: 1000;
-      pointer-events: none;
-    }
-
-    #breadImage {
       max-width: 80vw;
       max-height: 80vh;
       pointer-events: none;
@@ -62,24 +56,21 @@
 <body>
   <h1 id="title">EXIT117</h1>
   <div id="countdown">Loading...</div>
-  <img id="randomImage" src="" alt="Random surprise" />
   <img id="breadImage" src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Bread.jpg" alt="Bread" />
-  <audio id="beep" src="https://freesound.org/data/previews/273/273177_5121236-lq.mp3"></audio>
+  <audio id="beep" src="https://yourdomain.com/smoke-detector-alarm.mp3"></audio>
+  <audio id="breadAudio" loop>
+    <source src="https://yourdomain.com/bread-loop.mp3" type="audio/mpeg" />
+  </audio>
 
   <script>
     const countdownEl = document.getElementById("countdown");
-    const imageEl = document.getElementById("randomImage");
     const breadEl = document.getElementById("breadImage");
     const titleEl = document.getElementById("title");
     const beep = document.getElementById("beep");
+    const breadAudio = document.getElementById("breadAudio");
 
     let targetDate = new Date("2025-07-21T00:00:00Z");
     let breadMode = false;
-
-    const images = [
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Chair_without_background.png/600px-Chair_without_background.png",
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Bread.jpg/640px-Bread.jpg"
-    ];
 
     function getRandomFutureDate() {
       const now = new Date();
@@ -112,11 +103,14 @@
       countdownEl.style.display = "none";
       titleEl.style.display = "none";
       breadEl.style.display = "block";
+      breadAudio.play().catch(() => {});
 
       setTimeout(() => {
         breadEl.style.display = "none";
         countdownEl.style.display = "block";
         titleEl.style.display = "block";
+        breadAudio.pause();
+        breadAudio.currentTime = 0;
         targetDate = getRandomFutureDate();
         breadMode = false;
         updateCountdown();
@@ -125,33 +119,6 @@
 
     setInterval(updateCountdown, 1000);
     updateCountdown();
-
-    // Glitch effect every hour
-    setInterval(() => {
-      if (!breadMode) {
-        countdownEl.classList.add("glitch");
-        setTimeout(() => countdownEl.classList.remove("glitch"), 300);
-      }
-    }, 3600000);
-
-    // Random image flash
-    function scheduleRandomImage() {
-      const interval = Math.random() * (3600000 - 1800000) + 1800000;
-      setTimeout(() => {
-        if (!breadMode) {
-          const img = images[Math.floor(Math.random() * images.length)];
-          imageEl.src = img;
-          imageEl.style.display = "block";
-          setTimeout(() => {
-            imageEl.style.display = "none";
-            scheduleRandomImage();
-          }, 500);
-        } else {
-          scheduleRandomImage(); // wait and retry later
-        }
-      }, interval);
-    }
-    scheduleRandomImage();
 
     // Smoke alarm beep randomly every 10–20 mins
     function scheduleBeep() {
