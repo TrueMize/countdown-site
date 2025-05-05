@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Time Is Running Out</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EXIT117</title>
   <style>
     body {
-      background: #000;
-      color: #fff;
+      background-color: black;
+      color: white;
       font-family: monospace;
       display: flex;
       flex-direction: column;
@@ -15,42 +16,105 @@
       height: 100vh;
       margin: 0;
     }
+
     h1 {
-      font-size: 2em;
-      margin-bottom: 20px;
+      font-size: 4rem;
+      margin-bottom: 1rem;
     }
+
     #countdown {
-      font-size: 3em;
-      letter-spacing: 2px;
+      font-size: 3rem;
+      transition: transform 0.1s;
+    }
+
+    @keyframes glitch {
+      0% { transform: translate(0); }
+      20% { transform: translate(-2px, 2px); }
+      40% { transform: translate(-2px, -2px); }
+      60% { transform: translate(2px, 2px); }
+      80% { transform: translate(2px, -2px); }
+      100% { transform: translate(0); }
+    }
+
+    .glitch {
+      animation: glitch 0.3s linear;
+    }
+
+    #randomImage {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      max-width: 200px;
+      z-index: 1000;
+      pointer-events: none;
     }
   </style>
 </head>
 <body>
-  <h1>Time is running out.</h1>
+  <h1>EXIT117</h1>
   <div id="countdown">Loading...</div>
+  <img id="randomImage" src="" alt="Random surprise" />
 
   <script>
-    function updateCountdown() {
-      const targetDate = new Date("2025-07-21T00:00:00Z");
+    const countdownEl = document.getElementById("countdown");
+    const imageEl = document.getElementById("randomImage");
+
+    // Images for weird flashes
+    const images = [
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Chair_without_background.png/600px-Chair_without_background.png",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Bread.jpg/640px-Bread.jpg"
+    ];
+
+    // Generate a random future time (30s to 5min from now)
+    function getRandomFutureDate() {
       const now = new Date();
-      let diff = targetDate - now;
-
-      if (diff <= 0) {
-        // Reset: set new target date again
-        diff = targetDate - now;
-      }
-
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((diff / (1000 * 60)) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
-
-      document.getElementById("countdown").textContent =
-        `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      const seconds = Math.floor(Math.random() * (300 - 30) + 30); // 30s to 5min
+      return new Date(now.getTime() + seconds * 1000);
     }
 
+    let targetDate = getRandomFutureDate();
+
+    function updateCountdown() {
+      const now = new Date();
+      const distance = targetDate - now;
+
+      if (distance <= 0) {
+        targetDate = getRandomFutureDate();
+        return;
+      }
+
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      countdownEl.innerText = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    }
+
+    // Update countdown every second
     setInterval(updateCountdown, 1000);
-    updateCountdown();
+
+    // Add glitch effect every hour
+    setInterval(() => {
+      countdownEl.classList.add("glitch");
+      setTimeout(() => countdownEl.classList.remove("glitch"), 300);
+    }, 3600000); // Every hour
+
+    // Show a random image for 0.5s at a random interval (30min to 1hr)
+    function scheduleRandomImage() {
+      const interval = Math.random() * (3600000 - 1800000) + 1800000;
+      setTimeout(() => {
+        const img = images[Math.floor(Math.random() * images.length)];
+        imageEl.src = img;
+        imageEl.style.display = "block";
+        setTimeout(() => {
+          imageEl.style.display = "none";
+          scheduleRandomImage(); // Repeat
+        }, 500);
+      }, interval);
+    }
+
+    scheduleRandomImage();
   </script>
 </body>
 </html>
