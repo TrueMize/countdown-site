@@ -55,4 +55,25 @@
       let diff = targetDate - now;
 
       if (diff <= 0) {
-        // Reset: set new target date again
+        // Reset: set new target date again 
+        document.getElementById('countdown').innerText = "The time has come!";
+        return;  // Stop here if the countdown reaches 0
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      document.getElementById('countdown').innerText =
+        `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+      // Call the updateCountdown function every 1000ms (1 second)
+      setTimeout(updateCountdown, 1000);
+    }
+
+    // Initialize countdown
+    updateCountdown();
+  </script>
+</body>
+</html>
