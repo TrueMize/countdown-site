@@ -14,6 +14,7 @@
       justify-content: center;
       height: 100vh;
       margin: 0;
+      position: relative;
     }
     h1 {
       font-size: 2em;
@@ -23,11 +24,29 @@
       font-size: 3em;
       letter-spacing: 2px;
     }
+    .kofi-button {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      text-align: center;
+    }
+    .kofi-button p {
+      font-size: 0.8em;
+      color: #aaa;
+      margin-top: 5px;
+    }
   </style>
 </head>
 <body>
   <h1>Time is running out.</h1>
   <div id="countdown">Loading...</div>
+
+  <div class="kofi-button">
+    <a href="https://ko-fi.com/exit117" target="_blank">
+      <img src="https://ko-fi.com/img/githubbutton_sm.svg" alt="Buy Me a Coffee at ko-fi.com" />
+    </a>
+    <p>Kiitos tuesta! Se merkitsee paljon. 💛</p>
+  </div>
 
   <script>
     function updateCountdown() {
@@ -37,20 +56,3 @@
 
       if (diff <= 0) {
         // Reset: set new target date again
-        diff = targetDate - now;
-      }
-
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((diff / (1000 * 60)) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
-
-      document.getElementById("countdown").textContent =
-        `${days}d ${hours}h ${minutes}m ${seconds}s`;
-    }
-
-    setInterval(updateCountdown, 1000);
-    updateCountdown();
-  </script>
-</body>
-</html>
